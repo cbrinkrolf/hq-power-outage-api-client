@@ -9,7 +9,7 @@ The documentation and examples of the API can be found here: [Hydro Quebec API D
 In this project, the following requests are used:
 
 1. get current Service Interruption Report (BIS) file number:\
-   URL: [https://donnees.hydroquebec.com/explore/dataset/pannes-interruptions/information/](https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json)\
+   URL: [https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json](https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json)\
    returns: string formatted "yyyyMMddHHmmss" (length: 16, including 2 quotation marks)
    
 3. get list of power outages for specific BIS file number:\
