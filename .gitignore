@@ -28,6 +28,8 @@ replay_pid*
 .classpath
 
 # other folders
-/bin/
+/bin
 /.project
-/.settings/
+/.settings
+/HQstats
+/logs
