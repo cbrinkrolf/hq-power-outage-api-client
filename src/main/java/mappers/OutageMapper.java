@@ -20,17 +20,19 @@ public class OutageMapper {
 		this.logger = logger;
 	}
 
-	public List<Outage> rawJSON2Outages(String rawJSON) {
+	public List<Outage> parseRawJSON2Outages(String rawJSON) {
 		List<Outage> result = new ArrayList<>();
+		if (rawJSON == null || rawJSON.isBlank() || rawJSON.isEmpty()) {
+			return result;
+		}
 
 		String[] pannes = rawJSON.split("\"pannes\":");
 
-		if (pannes.length < 1) {
+		if (pannes.length < 2) {
 			return result;
 		}
 
 		List<String> matches = this.getMatches(pannes[1].trim());
-		System.out.println("Matches: " + matches.size());
 
 		for (String match : matches) {
 			String[] elements = prepareAndSplitMatch(match);
@@ -103,11 +105,11 @@ public class OutageMapper {
 			return null;
 		}
 
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-		System.out.println(customersAffected);
-		System.out.println(start.format(dtf));
-		System.out.println(longitude);
-		System.out.println(latitude);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		// System.out.println(customersAffected);
+		// System.out.println(start.format(dtf));
+		// System.out.println(longitude);
+		// System.out.println(latitude);
 
 		return new Outage(customersAffected, start, longitude, latitude);
 	}
@@ -145,7 +147,7 @@ public class OutageMapper {
 	}
 
 	private void appendOutage(Outage outage, StringBuilder builder) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 		builder.append("[");
 		builder.append("\"" + outage.customersAffected() + "\",");
