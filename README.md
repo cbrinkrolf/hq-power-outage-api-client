@@ -1,3 +1,5 @@
+![Java CI](https://github.com/cbrinkrolf/hq-power-outage-api-client/actions/workflows/maven-build.yml/badge.svg?branch=main)
+
 # Hydro Quebec Power Outage API Client
 This is a hobby project utilizing the public power outage API of Hydro Quebec to retrieve data of current power outages in Quebec.
 
