@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 
 public class SimpleDaemon extends AbstractDaemon {
 
-	private boolean writeLog = true;
-	private Logger logger;
 	private int waitSeconds = 60;
 
 	public SimpleDaemon(int waitSeconds) {
@@ -16,10 +14,7 @@ public class SimpleDaemon extends AbstractDaemon {
 	public SimpleDaemon(int waitSeconds, Logger logger) {
 		this.waitSeconds = waitSeconds;
 
-		this.logger = logger;
-		if (logger == null) {
-			writeLog = false;
-		}
+		this.setLogger(logger);
 	}
 
 	public void start() {
@@ -32,7 +27,7 @@ public class SimpleDaemon extends AbstractDaemon {
 						Thread.sleep(waitSeconds * 1000);
 					} catch (InterruptedException e) {
 						if (isLogging()) {
-							logger.log(Level.SEVERE, e.getMessage());
+							getLogger().log(Level.SEVERE, e.getMessage());
 						}
 						e.printStackTrace();
 					}
@@ -41,7 +36,4 @@ public class SimpleDaemon extends AbstractDaemon {
 		}.start();
 	}
 
-	private boolean isLogging() {
-		return writeLog && logger != null;
-	}
 }

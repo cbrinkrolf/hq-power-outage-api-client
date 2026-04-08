@@ -3,9 +3,10 @@ package daemon;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import Utility.MyBaseLogger;
 import export.DataSender;
 
-public abstract class AbstractDaemon implements Daemon {
+public abstract class AbstractDaemon extends MyBaseLogger implements Daemon {
 
 	Collection<DataSender> dataSenders = new ArrayList<>();
 

@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HQClient implements Client {
+import Utility.MyBaseLogger;
+
+public class HQClient extends MyBaseLogger implements Client {
 
 	private static final String BASE_URL = "https://pannes.hydroquebec.com/pannes/donnees/v3_0/";
 	// https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json
@@ -19,10 +22,8 @@ public class HQClient implements Client {
 	private static final String API_QUERY_POSTFIX = ".json";
 	// 20260323103020.json
 
-	private Logger logger;
-
 	public HQClient(Logger logger) {
-		this.logger = logger;
+		this.setLogger(logger);
 	}
 
 	public long getLatestBisVersion() {
@@ -54,7 +55,7 @@ public class HQClient implements Client {
 	}
 
 	private HttpURLConnection getConnection(String urlString) throws IOException {
-		URL url = new URL(urlString);
+		URL url = URI.create(urlString).toURL();
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
 		con.setConnectTimeout(5000);
