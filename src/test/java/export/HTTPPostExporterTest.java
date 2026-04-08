@@ -121,7 +121,7 @@ class HTTPPostExporterTest {
 
 		List<Outage> importedList = mapper.parseJSONOutages2Outages(body);
 		assertEquals(list.size(), importedList.size());
-		assertEquals(list.getFirst().customersAffected(), importedList.getFirst().customersAffected());
+		assertEquals(list.get(0).customersAffected(), importedList.get(0).customersAffected());
 		assertEquals(200, client.getResponseCode());
 		assertEquals(true, client.isSuccessfulSent());
 		server.close();

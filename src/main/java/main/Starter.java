@@ -11,14 +11,14 @@ import export.JSONFileWriter;
 
 public class Starter extends MyBaseLogger {
 
-	private static Path statsFolder = Path.of("HQstats2");
+	private static Path statsPath = Path.of("HQstats");
 
 	public Starter(Logger logger) {
 
 		HQClient client = new HQClient(logger);
 		client.setLogging(true);
 
-		JSONFileWriter writer = new JSONFileWriter(client, statsFolder, logger);
+		JSONFileWriter writer = new JSONFileWriter(client, statsPath, logger);
 		writer.setLogging(true);
 
 		SimpleDaemon d = new SimpleDaemon(60, logger);
