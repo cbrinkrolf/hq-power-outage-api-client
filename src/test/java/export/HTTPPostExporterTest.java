@@ -92,7 +92,7 @@ class HTTPPostExporterTest {
 
 		// Schedule some responses.
 		server.enqueue(new MockResponse.Builder().body("hello, world!").code(200).build());
-		// server.enqueue(new MockResponse.Builder().body("sup, bra?").build());
+		server.enqueue(new MockResponse.Builder().body("sup, bra?").build());
 		// server.enqueue(new MockResponse.Builder().body("yo dog").build());
 		// Start the server.
 		server.start();
@@ -122,6 +122,15 @@ class HTTPPostExporterTest {
 		List<Outage> importedList = mapper.parseJSONOutages2Outages(body);
 		assertEquals(list.size(), importedList.size());
 		assertEquals(list.get(0).customersAffected(), importedList.get(0).customersAffected());
+		assertEquals(200, client.getResponseCode());
+		assertEquals(true, client.isSuccessfulSent());
+
+		client.setJSONPayload(json);
+		client.sendData();
+
+		RecordedRequest request2 = server.takeRequest();
+		assertEquals("application/json", request2.getHeaders().get("Content-Type"));
+		assertEquals("POST", request2.getMethod());
 		assertEquals(200, client.getResponseCode());
 		assertEquals(true, client.isSuccessfulSent());
 		server.close();

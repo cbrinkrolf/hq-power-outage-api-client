@@ -35,7 +35,9 @@ public class HTTPPostExporter extends MyBaseLogger implements DataSender {
 		HttpURLConnection con = createConnection();
 		if (con != null) {
 			this.sendPayload(con);
+			con.disconnect();
 		}
+
 		this.payload = "";
 	}
 
@@ -52,6 +54,8 @@ public class HTTPPostExporter extends MyBaseLogger implements DataSender {
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type", "application/json");
 			con.setDoOutput(true);
+			con.setConnectTimeout(60000);
+			con.setReadTimeout(60000);
 		} catch (IOException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}
