@@ -1,5 +1,6 @@
 package main;
 
+import java.nio.file.Path;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -10,7 +11,7 @@ import export.JSONFileWriter;
 
 public class Starter extends MyBaseLogger {
 
-	private static String statsFolder = "HQstats";
+	private static Path statsFolder = Path.of("HQstats2");
 
 	public Starter(Logger logger) {
 

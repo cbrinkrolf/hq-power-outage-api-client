@@ -6,46 +6,58 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import Utility.MyBaseLogger;
 import client.Client;
 
 public class JSONFileWriter extends MyBaseLogger implements DataSender {
 
-	private String statsFolder = "HQstats";
+	private Path statsPath = Path.of("HQstats");
 
 	private Client client;
 
 	public JSONFileWriter(Client client) {
-		this(client, "HQstats", null);
+		this(client, Path.of("HQstats"), null);
 	}
 
-	public JSONFileWriter(Client client, String statsFolder) {
-		this(client, statsFolder, null);
+	public JSONFileWriter(Client client, Path statsPath) {
+		this(client, statsPath, null);
 	}
 
-	public JSONFileWriter(Client client, String statsFolder, Logger logger) {
+	public JSONFileWriter(Client client, Path statsPath, Logger logger) {
 		this.client = client;
-		this.statsFolder = statsFolder;
+		this.statsPath = statsPath;
 		this.setLogger(logger);
 	}
 
 	@Override
 	public void sendData() {
-
-		checkAndCreateFolder();
-		collectRecord();
+		try {
+			checkAndCreateFolder();
+			collectRecord();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	private void checkAndCreateFolder() {
-		File folder = new File(statsFolder);
-		if (!folder.exists() || !folder.isDirectory()) {
-			folder.mkdir();
+	public void setDirectory(Path directory) {
+
+		this.statsPath = directory;
+	}
+
+	private void checkAndCreateFolder() throws IOException {
+		if (!Files.exists(statsPath) || !Files.isDirectory(statsPath)) {
+			Files.createDirectory(statsPath);
 		}
 	}
 
 	private void collectRecord() {
+		if (client == null) {
+			return;
+		}
 
 		long version = client.getLatestBisVersion();
 		if (isLogging()) {
@@ -58,7 +70,7 @@ public class JSONFileWriter extends MyBaseLogger implements DataSender {
 			return;
 		}
 
-		String fileName = statsFolder + File.separator + version + ".json";
+		String fileName = statsPath + File.separator + version + ".json";
 		File f = new File(fileName);
 
 		if (f.exists() && f.isFile()) {
