@@ -1,5 +1,6 @@
 package Utility;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MyBaseLogger implements MyLogger {
@@ -24,6 +25,12 @@ public class MyBaseLogger implements MyLogger {
 	@Override
 	public boolean isLogging() {
 		return this.logging;
+	}
+
+	public void logMessageIfLogging(Level level, String message) {
+		if (isLogging()) {
+			logger.log(level, message);
+		}
 	}
 
 }

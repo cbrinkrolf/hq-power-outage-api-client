@@ -6,31 +6,69 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Utility.MyBaseLogger;
+import configuration.PropertiesManager;
 
 public class HQClient extends MyBaseLogger implements Client {
 
-	private static final String BASE_URL = "https://pannes.hydroquebec.com/pannes/donnees/v3_0/";
-	// https://pannes.hydroquebec.com/pannes/donnees/v3_0/bisversion.json
-	private static final String API_VERSION_SUFFIX = "bisversion.json";
+	private String baseUrl = "";
+	private String versionSuffix = "";
+	private String queryPrefix = "";
+	private String querySuffix = "";
 
-	private static final String API_QUERY_PREFIX = "bismarkers";
-	private static final String API_QUERY_POSTFIX = ".json";
-	// 20260323103020.json
+	private int timeoutSeconds = 10;
 
 	public HQClient(Logger logger) {
 		this.setLogger(logger);
+		initConstants();
+	}
+
+	private void initConstants() {
+		PropertiesManager pm = PropertiesManager.getInstance();
+		String url = pm.getPropertyValue(PropertiesManager.HQAPI_BASE_URL);
+		if (url == null) {
+			logMessageIfLogging(Level.SEVERE, "base url is null!");
+
+		} else {
+			if (!url.endsWith("/")) {
+				url += "/";
+			}
+			this.baseUrl = url;
+		}
+
+		String suffix = pm.getPropertyValue(PropertiesManager.HQAPI_VERSION_SUFFIX);
+		if (suffix == null) {
+			logMessageIfLogging(Level.SEVERE, "version suffix is null!");
+		} else {
+			this.versionSuffix = suffix;
+		}
+
+		String qPrefix = pm.getPropertyValue(PropertiesManager.HQAPI_QUERY_PREFIX);
+		if (qPrefix == null) {
+			logMessageIfLogging(Level.SEVERE, "query prefix is null!");
+		} else {
+			this.queryPrefix = qPrefix;
+		}
+
+		String qSuffix = pm.getPropertyValue(PropertiesManager.HQAPI_QUERY_SUFFIX);
+		if (qPrefix == null) {
+			logMessageIfLogging(Level.SEVERE, "query suffix is null!");
+		} else {
+			this.querySuffix = qSuffix;
+		}
+
 	}
 
 	public long getLatestBisVersion() {
 
 		HttpURLConnection connection;
 		try {
-			connection = getConnection(BASE_URL + API_VERSION_SUFFIX);
+			connection = getConnection(baseUrl + versionSuffix);
 			String response = getResponse(connection);
 			if (response.isEmpty()) {
 				return -1;
@@ -45,7 +83,7 @@ public class HQClient extends MyBaseLogger implements Client {
 	public String getRecord(long version) {
 		HttpURLConnection connection;
 		try {
-			connection = getConnection(BASE_URL + API_QUERY_PREFIX + String.valueOf(version) + API_QUERY_POSTFIX);
+			connection = getConnection(baseUrl + queryPrefix + String.valueOf(version) + querySuffix);
 			String response = getResponse(connection);
 			return response;
 		} catch (IOException e) {
@@ -58,8 +96,8 @@ public class HQClient extends MyBaseLogger implements Client {
 		URL url = URI.create(urlString).toURL();
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
-		con.setConnectTimeout(5000);
-		con.setReadTimeout(5000);
+		con.setConnectTimeout(timeoutSeconds * 1000);
+		con.setReadTimeout(timeoutSeconds * 1000);
 		con.setInstanceFollowRedirects(false);
 
 		return con;
