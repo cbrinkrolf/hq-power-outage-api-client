@@ -33,4 +33,10 @@ public class MyBaseLogger implements MyLogger {
 		}
 	}
 
+	public void logMessageIfLogging(Level level, String message, Object param1) {
+		if (isLogging()) {
+			logger.log(level, message, param1);
+		}
+	}
+
 }

@@ -60,13 +60,9 @@ public class JSONFileWriter extends MyBaseLogger implements DataSender {
 		}
 
 		long version = client.getLatestBisVersion();
-		if (isLogging()) {
-			getLogger().log(Level.INFO, "Version: {0}", version);
-		}
+		logMessageIfLogging(Level.INFO, "Version: {0}", version);
 		if (version <= 0) {
-			if (isLogging()) {
-				getLogger().log(Level.INFO, "Version: {0} is invalid.", version);
-			}
+			logMessageIfLogging(Level.INFO, "Version: {0} is invalid.", version);
 			return;
 		}
 
@@ -74,9 +70,7 @@ public class JSONFileWriter extends MyBaseLogger implements DataSender {
 		File f = new File(fileName);
 
 		if (f.exists() && f.isFile()) {
-			if (isLogging()) {
-				getLogger().log(Level.INFO, "Version: {0} exists already.", version);
-			}
+			logMessageIfLogging(Level.INFO, "Version: {0} exists already.", version);
 			return;
 		}
 
@@ -85,9 +79,7 @@ public class JSONFileWriter extends MyBaseLogger implements DataSender {
 
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
 				writer.write(response);
-				if (isLogging()) {
-					getLogger().log(Level.INFO, "Version: {0} file written.", version);
-				}
+				logMessageIfLogging(Level.INFO, "Version: {0} file written.", version);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

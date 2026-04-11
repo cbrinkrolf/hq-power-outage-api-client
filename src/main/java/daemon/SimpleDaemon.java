@@ -24,11 +24,9 @@ public class SimpleDaemon extends AbstractDaemon {
 				while (true) {
 					try {
 						callAllDataSenders();
-						Thread.sleep(waitSeconds * 1000);
+						Thread.sleep(waitSeconds * 1_000L);
 					} catch (InterruptedException e) {
-						if (isLogging()) {
-							getLogger().log(Level.SEVERE, e.getMessage());
-						}
+						logMessageIfLogging(Level.SEVERE, e.getMessage());
 						e.printStackTrace();
 					}
 				}
