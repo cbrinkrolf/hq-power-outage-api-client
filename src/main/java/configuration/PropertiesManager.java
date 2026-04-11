@@ -17,8 +17,10 @@ public class PropertiesManager {
 	public static final String POST_EXPORTER_ENDPOINT = "postexporter.endpoint";
 	public static final String DAEMON_REFRESH_SECONDS = "daemon.refresh.seconds";
 
-	private static final String internalConfigFile = "config.properties";
-	private static final String externalConfigFile = "config.properties";
+	public static final String INTERNAL_CONFIG_FILE = "config.properties";
+	public static final String EXTERNAL_CONFIG_FILE = "config.properties";
+
+	private static Path externalConfigPath = null;
 
 	private static PropertiesManager instance = null;
 
@@ -37,22 +39,20 @@ public class PropertiesManager {
 
 	private boolean existsInternalConfigurationFile() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		return loader.getResource(internalConfigFile) != null;
+		return loader.getResource(INTERNAL_CONFIG_FILE) != null;
 	}
 
 	private boolean existsExternalConfigurationFile() {
-		return Files.exists(Path.of(externalConfigFile));
+		return Files.exists(getExternalConfigFilePath());
 	}
 
 	private boolean createExternalConfigurationFile() {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		if (loader.getResource(internalConfigFile) == null) {
+		if (loader.getResource(INTERNAL_CONFIG_FILE) == null) {
 			return false;
 		}
-		Properties properties = PropertiesReader.getConfiguration(loader.getResourceAsStream(internalConfigFile));
-		Path p = Path.of(externalConfigFile);
-
-		return PropertiesWriter.writeConfiguration(properties, p);
+		Properties properties = PropertiesReader.getConfiguration(loader.getResourceAsStream(INTERNAL_CONFIG_FILE));
+		return PropertiesWriter.writeConfiguration(properties, getExternalConfigFilePath());
 	}
 
 	private boolean createExternalConfigurationFileIfNotExist() {
@@ -68,9 +68,9 @@ public class PropertiesManager {
 	private void loadProperties() {
 		try {
 			Properties defaultProps = PropertiesReader
-					.getConfiguration(Files.newInputStream(Path.of(internalConfigFile)));
+					.getConfiguration(Files.newInputStream(Path.of(INTERNAL_CONFIG_FILE)));
 			this.properties = defaultProps;
-			this.properties = PropertiesReader.getConfiguration(Files.newInputStream(Path.of(externalConfigFile)),
+			this.properties = PropertiesReader.getConfiguration(Files.newInputStream(getExternalConfigFilePath()),
 					defaultProps);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -89,6 +89,23 @@ public class PropertiesManager {
 			loadProperties();
 		}
 		return properties;
+	}
+
+	private Path getExternalConfigFilePath() {
+		if (externalConfigPath == null) {
+			return Path.of(EXTERNAL_CONFIG_FILE);
+		} else {
+			return externalConfigPath.resolve(EXTERNAL_CONFIG_FILE);
+		}
+	}
+
+	public Path getExternalConfigPath() {
+		return externalConfigPath;
+	}
+
+	public static void setExternalConfigDirectory(Path externalConfigPath) {
+
+		PropertiesManager.externalConfigPath = externalConfigPath;
 	}
 
 }
