@@ -33,3 +33,6 @@ replay_pid*
 /.settings
 /HQstats
 /logs
+
+# external config file
+config.properties
