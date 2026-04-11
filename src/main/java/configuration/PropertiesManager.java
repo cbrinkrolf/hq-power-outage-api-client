@@ -1,6 +1,7 @@
 package configuration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -38,8 +39,7 @@ public class PropertiesManager {
 	}
 
 	private boolean existsInternalConfigurationFile() {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		return loader.getResource(INTERNAL_CONFIG_FILE) != null;
+		return getInternalConfigFileStream() != null;
 	}
 
 	private boolean existsExternalConfigurationFile() {
@@ -47,11 +47,10 @@ public class PropertiesManager {
 	}
 
 	private boolean createExternalConfigurationFile() {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		if (loader.getResource(INTERNAL_CONFIG_FILE) == null) {
+		if (getInternalConfigFileStream() == null) {
 			return false;
 		}
-		Properties properties = PropertiesReader.getConfiguration(loader.getResourceAsStream(INTERNAL_CONFIG_FILE));
+		Properties properties = PropertiesReader.getConfiguration(getInternalConfigFileStream());
 		return PropertiesWriter.writeConfiguration(properties, getExternalConfigFilePath());
 	}
 
@@ -67,8 +66,7 @@ public class PropertiesManager {
 
 	private void loadProperties() {
 		try {
-			Properties defaultProps = PropertiesReader
-					.getConfiguration(Files.newInputStream(Path.of(INTERNAL_CONFIG_FILE)));
+			Properties defaultProps = PropertiesReader.getConfiguration(getInternalConfigFileStream());
 			this.properties = defaultProps;
 			this.properties = PropertiesReader.getConfiguration(Files.newInputStream(getExternalConfigFilePath()),
 					defaultProps);
@@ -106,6 +104,11 @@ public class PropertiesManager {
 	public static void setExternalConfigDirectory(Path externalConfigPath) {
 
 		PropertiesManager.externalConfigPath = externalConfigPath;
+	}
+
+	private InputStream getInternalConfigFileStream() {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		return loader.getResourceAsStream(INTERNAL_CONFIG_FILE);
 	}
 
 }
