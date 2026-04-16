@@ -12,6 +12,13 @@
 		<exec.mainClass>main.Main</exec.mainClass>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/cbrinkrolf/hq-power-outage-core/</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<finalName>hq-power-outage-api-client-v.${project.version}</finalName>
 		<plugins>
@@ -78,6 +85,11 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>io.github.cbrinkrolf</groupId>
+			<artifactId>hq-power-outage-core</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 
 		<!-- for testing -->
 		<dependency>
