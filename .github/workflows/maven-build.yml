@@ -24,4 +24,6 @@ jobs:
         distribution: 'temurin' # eclipse temurin 
         cache: maven
     - name: Build with Maven
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn -B package --file pom.xml
